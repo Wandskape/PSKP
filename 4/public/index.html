@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Items</title>
+</head>
+<body>
+
+    <!-- <img src="1win.gif"/> -->
+
+    <h2>Добавить запись</h2>
+    <form id="postForm">
+        <label for="name">Имя:</label>
+        <input type="text" id="name" required>
+        <br>
+        <label for="bday">Дата рождения:</label>
+        <input type="date" id="bday" required>
+        <br>
+        <button type="submit">Добавить</button>
+    </form>
+    <div id="postResult"></div>
+
+    <h2>Получить все записи</h2>
+    <button id="getBtn" class="allItemButton">Получить записи</button>
+    <div id="getResult"></div>
+
+    <h2>Изменить запись</h2>
+    <form id="putForm">
+        <label for="id">ID:</label>
+        <input type="number" id="id" required>
+        <br>
+        <label for="name">Имя:</label>
+        <input type="text" id="updateName" required>
+        <br>
+        <label for="bday">Дата рождения:</label>
+        <input type="date" id="updateBday" required>
+        <br>
+        <button type="submit">Изменить</button>
+    </form>
+    <div id="putResult"></div>
+
+    <h2>Удалить запись</h2>
+    <form id="deleteForm">
+        <label for="deleteId">ID:</label>
+        <input type="number" id="deleteId" required>
+        <br>
+        <button type="submit">Удалить</button>
+    </form>
+    <div id="deleteResult"></div>
+
+    <script>
+        document.getElementById('postForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const bday = document.getElementById('bday').value;
+
+            fetch('/api/db', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, bday })
+            }).then(response => response.json())
+              .then(data => {
+                  document.getElementById('postResult').textContent = `Добавлено: ${JSON.stringify(data)}`;
+              });
+        });
+
+        document.getElementById('getBtn').addEventListener('click', function() {
+            fetch('/api/db')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('getResult').textContent = JSON.stringify(data);
+            });
+        });
+
+        document.getElementById('putForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const id = document.getElementById('id').value;
+            const name = document.getElementById('updateName').value;
+            const bday = document.getElementById('updateBday').value;
+
+            fetch('/api/db', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, bday })
+            }).then(response => response.json())
+              .then(data => {
+                  document.getElementById('putResult').textContent = `Изменено: ${JSON.stringify(data)}`;
+              });
+        });
+
+        document.getElementById('deleteForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const id = document.getElementById('deleteId').value;
+
+            fetch(`/api/db?id=${id}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('deleteResult').textContent = `Удалено: ${JSON.stringify(data)}`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+body{
+    width: 20%;
+    position: relative;
+    text-align: center;
+    left: 40%;
+}
+
+h2, form{
+    text-align: left;
+    margin-left: 10px;
+}
+
+form>button{
+    margin-top: 20px;
+}
+
+form>input{
+    margin-top: 5px;
+}
+
+.allItemButton{ 
+    display: flex;
+    justify-content: left;
+    margin-left: 10px;
+}

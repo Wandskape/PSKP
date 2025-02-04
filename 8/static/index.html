@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример формы</title>
+</head>
+<body>
+    <h2>Форма с различными элементами ввода</h2>
+    
+    <form action='formparameter' method="POST">
+        <label for="name">Имя:</label>
+        <input type="text" id="name" name="name" placeholder="Введите ваше имя" required>
+        <br><br>
+
+        <label for="age">Возраст:</label>
+        <input type="number" id="age" name="age" placeholder="Введите ваш возраст" min="0" required>
+        <br><br>
+
+        <label for="birthdate">Дата рождения:</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+        <br><br>
+
+        <label for="subscribe">Подписаться на рассылку:</label>
+        <input type="checkbox" id="subscribe" name="subscribe">
+        <br><br>
+
+        <label>Выберите ваш пол:</label><br>
+        <input type="radio" id="male" name="gender" value="male" required>
+        <label for="male">Мужской</label><br>
+        <input type="radio" id="female" name="gender" value="female" required>
+        <label for="female">Женский</label><br>
+        <input type="radio" id="other" name="gender" value="other" required>
+        <label for="other">Другое</label>
+        <br><br>
+
+        <label for="comments">Комментарии:</label><br>
+        <textarea id="comments" name="comments" rows="4" cols="50" placeholder="Введите ваши комментарии"></textarea>
+        <br><br>
+
+        <input type="submit" name="submitButton" value="Отправить данные" id="postForm">
+        <input type="submit" name="submitButton" value="Сбросить данные" id="clearForm">
+    </form>
+
+    <p id="postResult"></p>
+
+    <script>
+        document.getElementById('postForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const birthdate = document.getElementById('birthdate').value;
+            const subscribe = document.getElementById('subscribe').value;
+            const male = document.getElementById('male').value;
+            const female = document.getElementById('female').value;
+            const other = document.getElementById('other').value;
+            const comments = document.getElementById('comments').value;
+
+            const gender = {male, female, other}
+
+            gender.forEach(element => {
+                if(element == true){
+                    gender = element;
+                }
+            });
+
+            fetch('/formparameter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, age, birthdate, subscribe, gender, comments})
+            }).then(response => response.json())
+              .then(data => {
+                  document.getElementById('postResult').textContent = `Добавлено: ${JSON.stringify(data)}`;
+              });
+        });
+    </script>
+</body>
+</html>

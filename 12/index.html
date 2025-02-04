@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>Клиент для получения уведомлений</h1>
+    <div id="notifications"></div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('Соединение с сервером WebSocket установлено');
+        };
+
+        ws.onmessage = (event) => {
+            const notificationsDiv = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.textContent = event.data;
+            notificationsDiv.appendChild(notification);
+        };
+
+        ws.onclose = () => {
+            console.log('Соединение с сервером WebSocket закрыто');
+        };
+
+        ws.onerror = (error) => {
+            console.error('Ошибка WebSocket:', error);
+        };
+    </script>
+</body>
+</html>

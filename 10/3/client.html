@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+    <button onclick="connectWS()">Connect to WebSocket</button>
+    <button onclick="sendMessage()">Send Message</button>
+    <div id="output"></div>
+    <script>
+        let ws;
+        let messageCount = 0;
+
+        function connectWS() {
+            ws = new WebSocket(`ws://${location.host}`);
+
+            ws.onopen = () => {
+                console.log('Connected to WebSocket server');
+            };
+
+            ws.onmessage = (event) => {
+                console.log('Received:', event.data);
+                document.getElementById('output').innerHTML += `<p>${event.data}</p>`;
+            };
+
+            ws.onclose = () => {
+                console.log('Disconnected from WebSocket server');
+            };
+        }
+
+        function sendMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                messageCount++;
+                const message = `Client message ${messageCount}`;
+                ws.send(message);
+                console.log('Sent:', message);
+            }
+        }
+    </script>
+</body>
+</html>

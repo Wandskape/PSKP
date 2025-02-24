@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const ws = new WebSocket("ws://localhost:4000");
+const ws = new WebSocket("ws://localhost:4002");
 
 ws.on("open", () => {
   console.log("connected to server");
@@ -12,7 +12,6 @@ ws.on("message", (message) => {
 
 ws.on("ping", () => {
   console.log("received ping from server, sending pong");
-  ws.pong();
 });
 
 ws.on("close", () => {

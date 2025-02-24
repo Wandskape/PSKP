@@ -1,1 +1,30 @@
-1412412412
+//en
+let enCharsArray: AssociativeArray = {}
+
+for(const char of enAlphabet){
+    enCharsArray[char] = 0
+}
+
+const enFilePath:string = './texts/en.txt'
+
+symbolCount(enCharsArray, enAlphabet, enFilePath)
+
+
+----------
+let numberOfChars:number = 0
+
+for (const key in ruCharsArray) {
+    numberOfChars += ruCharsArray[key]
+    if (ruCharsArray.hasOwnProperty(key)) {
+        console.log(`Символ: ${key}, Количество: ${ruCharsArray[key]}`);
+    }
+}
+
+console.log(`Количество символов текста: ${numberOfChars}`)
+
+for (const key in ruCharsArray) {
+    ruCharsArray[key] /= numberOfChars
+    if (ruCharsArray.hasOwnProperty(key)) {
+        console.log(`Символ: ${key}, Вероятность: ${ruCharsArray[key]}`);
+    }
+}

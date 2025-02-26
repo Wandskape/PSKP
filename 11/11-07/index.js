@@ -17,6 +17,3 @@ ws.register("notifyB", () => {
 ws.register("notifyC", () => {
   console.log("C event"); 
 }).public();
-
-//hand shake
-//event notification

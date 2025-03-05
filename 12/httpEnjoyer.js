@@ -33,6 +33,11 @@ const server = http.createServer((req, res) => {
             });
             req.on('end', () => {
                 const { id, name, bday, specility } = JSON.parse(body);
+                console.log(id)
+                if(id === undefined){
+                    res.end(JSON.stringify({ error: `Id не может быть null ${id}` }));
+                    return;
+                }
                 fs.readFile(StudentJSON, 'utf8', (err, data) => {
                     if (err) {
                         res.statusCode = 500;
@@ -69,6 +74,10 @@ const server = http.createServer((req, res) => {
             });
             req.on('end', () => {
                 const { id, name, bday, specility } = JSON.parse(body);
+                if(id === undefined || null){
+                    res.end(JSON.stringify({ error: `Id не может быть null ${id}` }));
+                    return;
+                }
                 fs.readFile(StudentJSON, 'utf8', (err, data) => {
                     if (err) {
                         res.statusCode = 500;

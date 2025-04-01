@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Управление кафедрами</title>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+        h1 {
+            text-align: left;
+            font-size: 2.8rem;
+            color: #3a77f2;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid #3a77f2;
+            background-color: #e8f0fe;
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input, select, button {
+            width: 95%;
+            margin-bottom: 12px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px #bbb;
+        }
+        button {
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            border: none;
+            background-color: #007bff;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #d9534f;
+        }
+        .delete-btn:hover {
+            background-color: #c9302c;
+        }
+        table {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+        th {
+            background-color: #3a77f2;
+            color: #ffffff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        #error-message {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            color: #d9534f;
+            border: 2px solid #d9534f;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            background-color: #fbe8e8;
+        }
+        #success-message {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            color: #28a745;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            background-color: #e8fbe8;
+        }
+    </style>
+trancate
+    уровни изоляции 
+</head>
+<body>
+    <h1>Управление кафедрами</h1>
+
+    <div id="error-message"></div>
+    <div id="success-message"></div>
+
+    <div class="section">
+        <h2>Все кафедры</h2>
+        <button id="getPulpitsBtn">Получить список кафедр</button>
+        <div id="pulpitsList"></div>
+    </div>
+
+    <div class="section">
+        <h2>Добавить кафедру</h2>
+        <div class="form-group">
+            <label for="pulpitName">Название кафедры:</label>
+            <input id="pulpitName" required type="text">
+        </div>
+        <div class="form-group">
+            <label for="facultyId">ID факультета:</label>
+            <input id="facultyId" required type="number">
+        </div>
+        <button id="addPulpitBtn">Добавить кафедру</button>
+    </div>
+
+    <div class="section">
+        <h2>Обновить кафедру</h2>
+        <div class="form-group">
+            <label for="updatePulpitId">ID кафедры:</label>
+            <input id="updatePulpitId" required type="number">
+        </div>
+        <div class="form-group">
+            <label for="updatePulpitName">Новое название:</label>
+            <input id="updatePulpitName" required type="text">
+        </div>
+        <div class="form-group">
+            <label for="updateFacultyId">Новый ID факультета:</label>
+            <input id="updateFacultyId" required type="number">
+        </div>
+        <button id="updatePulpitBtn">Обновить кафедру</button>
+    </div>
+
+    <div class="section">
+        <h2>Удалить кафедру</h2>
+        <div class="form-group">
+            <label for="deletePulpitId">ID кафедры:</label>
+            <input id="deletePulpitId" required type="number">
+        </div>
+        <button class="delete-btn" id="deletePulpitBtn">Удалить кафедру</button>
+    </div>
+
+    <script>
+
+        const getPulpitsBtn = document.getElementById('getPulpitsBtn');
+        const addPulpitBtn = document.getElementById('addPulpitBtn');
+        const updatePulpitBtn = document.getElementById('updatePulpitBtn');
+        const deletePulpitBtn = document.getElementById('deletePulpitBtn');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const pulpitsList = document.getElementById('pulpitsList');
+
+        const API_URL = '/api/pulpits';
+
+        function showMessage(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function handleError(error) {
+            console.error('Error:', error);
+            let errorMsg = error.message || 'Произошла ошибка';
+            if (error.response && error.response.message) {
+                errorMsg = error.response.message;
+            }
+            showMessage(errorMessage, errorMsg);
+        }
+
+        async function makeRequest(url, method, data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Ошибка сервера');
+                }
+
+                return result;
+            } catch (error) {
+                handleError(error);
+                throw error;
+            }
+        }
+
+        getPulpitsBtn.addEventListener('click', async () => {
+            try {
+                const pulpits = await makeRequest(API_URL, 'GET');
+
+                if (pulpits.length === 0) {
+                    pulpitsList.innerHTML = '<p>Нет данных о кафедрах</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>ID факультета</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                pulpits.forEach(pulpit => {
+                    tableHTML += `
+                        <tr>
+                            <td>${pulpit.PULPIT_ID}</td>
+                            <td>${pulpit.PULPIT_NAME}</td>
+                            <td>${pulpit.FACULTY_ID}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+
+                pulpitsList.innerHTML = tableHTML;
+                showMessage(successMessage, 'Список кафедр успешно загружен');
+            } catch (error) {
+            }
+        });
+
+        addPulpitBtn.addEventListener('click', async () => {
+            const name = document.getElementById('pulpitName').value;
+            const facultyId = document.getElementById('facultyId').value;
+
+            if (!name || !facultyId) {
+                showMessage(errorMessage, 'Все поля обязательны для заполнения');
+                return;
+            }
+
+            try {
+                const newPulpit = await makeRequest(API_URL, 'POST', {
+                    PULPIT_NAME: name,
+                    FACULTY_ID: facultyId
+                });
+
+                showMessage(successMessage, `Кафедра "${newPulpit.PULPIT_NAME}" успешно добавлена с ID ${newPulpit.PULPIT_ID}`);
+
+                document.getElementById('pulpitName').value = '';
+                document.getElementById('facultyId').value = '';
+            } catch (error) {
+            }
+        });
+
+        updatePulpitBtn.addEventListener('click', async () => {
+            const id = document.getElementById('updatePulpitId').value;
+            const name = document.getElementById('updatePulpitName').value;
+            const facultyId = document.getElementById('updateFacultyId').value;
+
+            if (!id || !name || !facultyId) {
+                showMessage(errorMessage, 'Все поля обязательны для заполнения');
+                return;
+            }
+
+            try {
+                const updatedPulpit = await makeRequest(`${API_URL}/${id}`, 'PUT', {
+                    PULPIT_NAME: name,
+                    FACULTY_ID: facultyId
+                });
+
+                showMessage(successMessage, `Кафедра с ID ${id} успешно обновлена`);
+
+                document.getElementById('updatePulpitId').value = '';
+                document.getElementById('updatePulpitName').value = '';
+                document.getElementById('updateFacultyId').value = '';
+            } catch (error) {
+            }
+        });
+
+        deletePulpitBtn.addEventListener('click', async () => {
+            const id = document.getElementById('deletePulpitId').value;
+
+            if (!id) {
+                showMessage(errorMessage, 'Введите ID кафедры');
+                return;
+            }
+
+            try {
+                const deletedPulpit = await makeRequest(`${API_URL}/${id}`, 'DELETE');
+                showMessage(successMessage, `Кафедра с ID ${id} успешно удалена`);
+                document.getElementById('deletePulpitId').value = '';
+            } catch (error) {
+            }
+        });
+    </script>
+</body>
+</html>

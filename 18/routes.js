@@ -3,10 +3,6 @@ const { parseBody } = require('./utils');
 
 module.exports = async (req, res) => {
     try {
-        // if (['POST', 'PUT'].includes(req.method)) {
-        //     req.body = await parseBody(req);
-        // }
-
         const urlParts = req.url.split('/').filter(part => part !== '');
 
         if (req.method === 'GET' && req.url === '/') {
@@ -44,34 +40,34 @@ module.exports = async (req, res) => {
             case req.method === 'POST' && urlParts.join('/') === 'api/auditoriums':
                 return controller.addAuditorium(req, res);
 
-            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'faculties' && urlParts[2]:
+            case (req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'faculties' && urlParts[2]) && urlParts[2] !== "":
                 return controller.updateFaculty(req, res);
 
-            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'pulpits' && urlParts[2]:
+            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'pulpits' && urlParts[2] && urlParts[2] !== "":
                 return controller.updatePulpit(req, res);
 
-            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'subjects' && urlParts[2]:
+            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'subjects' && urlParts[2] && urlParts[2] !== "":
                 return controller.updateSubject(req, res);
 
-            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'auditoriumstypes' && urlParts[2]:
+            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'auditoriumstypes' && urlParts[2] && urlParts[2] !== "":
                 return controller.updateAuditoriumType(req, res);
 
-            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'auditoriums' && urlParts[2]:
+            case req.method === 'PUT' && urlParts[0] === 'api' && urlParts[1] === 'auditoriums' && urlParts[2] && urlParts[2] !== "":
                 return controller.updateAuditorium(req, res);
 
-            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'faculties' && urlParts[2]:
+            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'faculties' && urlParts[2] && urlParts[2] !== "":
                 return controller.deleteFaculty(req, res);
 
-            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'pulpits' && urlParts[2]:
+            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'pulpits' && urlParts[2] && urlParts[2] !== "":
                 return controller.deletePulpit(req, res);
 
-            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'subjects' && urlParts[2]:
+            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'subjects' && urlParts[2] && urlParts[2] !== "":
                 return controller.deleteSubject(req, res);
 
-            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'auditoriumtypes' && urlParts[2]:
+            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'auditoriumstypes' && urlParts[2] && urlParts[2] !== "":
                 return controller.deleteAuditoriumType(req, res);
 
-            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'auditoriums' && urlParts[2]:
+            case req.method === 'DELETE' && urlParts[0] === 'api' && urlParts[1] === 'auditoriums' && urlParts[2] && urlParts[2] !== "":
                 return controller.deleteAuditorium(req, res);
 
             default:

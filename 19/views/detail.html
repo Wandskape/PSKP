@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        #task-details {
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        p {
+            font-size: 16px;
+            color: #444;
+            margin: 10px 0;
+        }
+
+        strong {
+            color: #222;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<h1>Task Details</h1>
+<div id="task-details">
+    <div class="loading">Loading task details...</div>
+</div>
+<div class="actions">
+    <a href="#" id="edit-link" class="btn">Edit</a>
+    <a href="/" class="btn">Back to list</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const taskId = window.location.pathname.split('/').pop();
+        fetch(`/api/tasks/${taskId}`)
+            .then(response => response.json())
+            .then(task => {
+                document.getElementById('task-details').innerHTML = `
+                    <p><strong>ID:</strong> ${task.id}</p>
+                    <p><strong>Name:</strong> ${task.name}</p>
+                `;
+                document.getElementById('edit-link').href = `/${task.id}/edit`;
+            });
+    });
+</script>

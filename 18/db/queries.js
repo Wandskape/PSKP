@@ -6,6 +6,7 @@ const Auditorium = require('./models/Auditorium');
 
 module.exports = {
     getAllFaculties: async () => await Faculty.findAll(),
+    getFaculty:async (id) => Faculty.findByPk(id),
     addFaculty: async (FACULTY, FACULTY_NAME) => {
         return await Faculty.create({ FACULTY, FACULTY_NAME });
     },
@@ -19,6 +20,7 @@ module.exports = {
     },
 
     getAllPulpits: async () => await Pulpit.findAll(),
+    getPulpit: async (id) => await Pulpit.findByPk(id),
     addPulpit: async (PULPIT, PULPIT_NAME, FACULTY) => {
         return await Pulpit.create({ PULPIT, PULPIT_NAME, FACULTY });
     },
@@ -32,6 +34,7 @@ module.exports = {
     },
 
     getAllSubjects: async () => await Subject.findAll(),
+    getSubject: async (id) => await Subject.findByPk(id),
     addSubject: async (SUBJECT, SUBJECT_NAME, PULPIT) => {
         return await Subject.create({ SUBJECT, SUBJECT_NAME, PULPIT });
     },
@@ -45,6 +48,7 @@ module.exports = {
     },
 
     getAllAuditoriumTypes: async () => await AuditoriumType.findAll(),
+    getAuditoriumType: async (id) => await AuditoriumType.findByPk(id),
     addAuditoriumType: async (AUDITORIUM_TYPE, AUDITORIUM_TYPENAME) => {
         return await AuditoriumType.create({ AUDITORIUM_TYPE, AUDITORIUM_TYPENAME });
     },
@@ -58,6 +62,7 @@ module.exports = {
     },
 
     getAllAuditoriums: async () => await Auditorium.findAll(),
+    getAuditorium: async (id) => await Auditorium.findByPk(id),
     addAuditorium: async (AUDITORIUM, AUDITORIUM_NAME, AUDITORIUM_CAPACITY, AUDITORIUM_TYPE) => {
         return await Auditorium.create({
             AUDITORIUM,

@@ -17,7 +17,10 @@ module.exports = {
             if (!FACULTY || !FACULTY_NAME) {
                 return sendResponse(res, 400, { error: 'Missing required fields' });
             }
-
+            const existingFaculty = await dbQueries.getFaculty(FACULTY);
+            if(existingFaculty){
+                return sendResponse(res, 400, { error: 'This faculty already exist' });
+            }
             const newFaculty = await dbQueries.addFaculty(FACULTY, FACULTY_NAME);
             sendResponse(res, 201, newFaculty);
         } catch (err) {
@@ -34,7 +37,10 @@ module.exports = {
             if (!FACULTY_NAME) {
                 return sendResponse(res, 400, { error: 'FACULTY_NAME is required' });
             }
-
+            const existingFaculty = await dbQueries.getFaculty(id);
+            if(!existingFaculty){
+                return sendResponse(res, 400, { error: 'Faculty not found' });
+            }
             const updated = await dbQueries.updateFaculty(id, FACULTY_NAME);
             updated
                 ? sendResponse(res, 200, updated)
@@ -73,7 +79,10 @@ module.exports = {
             if (!PULPIT || !PULPIT_NAME || !FACULTY) {
                 return sendResponse(res, 400, { error: 'Missing required fields' });
             }
-
+            const existingPulpit = await dbQueries.getPulpit(PULPIT);
+            if(existingPulpit){
+                return sendResponse(res, 400, { error: 'This pulpit already exist' });
+            }
             const newPulpit = await dbQueries.addPulpit(PULPIT, PULPIT_NAME, FACULTY);
             sendResponse(res, 201, newPulpit);
         } catch (err) {
@@ -85,7 +94,10 @@ module.exports = {
         try {
             const id = req.url.split('/')[3];
             if (!id) return sendResponse(res, 400, { error: 'Invalid pulpit ID' });
-
+            const existingPulpit = await dbQueries.getPulpit(id);
+            if(!existingPulpit){
+                return sendResponse(res, 400, { error: 'Pulpit not found' });
+            }
             const { PULPIT_NAME, FACULTY } = req.body;
             const updated = await dbQueries.updatePulpit(id, PULPIT_NAME, FACULTY);
 
@@ -126,7 +138,10 @@ module.exports = {
             if (!SUBJECT || !SUBJECT_NAME || !PULPIT) {
                 return sendResponse(res, 400, { error: 'Missing required fields' });
             }
-
+            const existingSubject = await dbQueries.getSubject(SUBJECT);
+            if(existingSubject){
+                return sendResponse(res, 400, { error: 'This subject already exist' });
+            }
             const newSubject = await dbQueries.addSubject(SUBJECT, SUBJECT_NAME, PULPIT);
             sendResponse(res, 201, newSubject);
         } catch (err) {
@@ -138,7 +153,10 @@ module.exports = {
         try {
             const id = req.url.split('/')[3];
             if (!id) return sendResponse(res, 400, { error: 'Invalid subject ID' });
-
+            const existingSubject = await dbQueries.getSubject(id);
+            if(!existingSubject){
+                return sendResponse(res, 400, { error: 'Subject not found' });
+            }
             const { SUBJECT_NAME, PULPIT } = req.body;
             const updated = await dbQueries.updateSubject(id, SUBJECT_NAME, PULPIT);
 
@@ -179,7 +197,10 @@ module.exports = {
             if (!AUDITORIUM_TYPE || !AUDITORIUM_TYPENAME) {
                 return sendResponse(res, 400, { error: 'Missing required fields' });
             }
-
+            const existingAuditoriumType = await dbQueries.getAuditoriumType(AUDITORIUM_TYPE);
+            if(existingAuditoriumType){
+                return sendResponse(res, 400, { error: 'This AuditoriumType already exist' });
+            }
             const newType = await dbQueries.addAuditoriumType(AUDITORIUM_TYPE, AUDITORIUM_TYPENAME);
             sendResponse(res, 201, newType);
         } catch (err) {
@@ -191,7 +212,10 @@ module.exports = {
         try {
             const id = req.url.split('/')[3];
             if (!id) return sendResponse(res, 400, { error: 'Invalid type ID' });
-
+            const existingAuditoriumType = await dbQueries.getAuditoriumType(id);
+            if(!existingAuditoriumType){
+                return sendResponse(res, 400, { error: 'AuditoriumType not found' });
+            }
             const { AUDITORIUM_TYPENAME } = req.body;
             const updated = await dbQueries.updateAuditoriumType(id, AUDITORIUM_TYPENAME);
 
@@ -232,7 +256,10 @@ module.exports = {
             if (!AUDITORIUM || !AUDITORIUM_NAME || !AUDITORIUM_CAPACITY || !AUDITORIUM_TYPE) {
                 return sendResponse(res, 400, { error: 'Missing required fields' });
             }
-
+            const existingAuditorium = await dbQueries.getAuditorium(AUDITORIUM);
+            if(existingAuditorium){
+                return sendResponse(res, 400, { error: 'This Auditorium already exist' });
+            }
             const newAuditorium = await dbQueries.addAuditorium(
                 AUDITORIUM,
                 AUDITORIUM_NAME,
@@ -249,7 +276,10 @@ module.exports = {
         try {
             const id = req.url.split('/')[3];
             if (!id) return sendResponse(res, 400, { error: 'Invalid auditorium ID' });
-
+            const existingAuditorium = await dbQueries.getAuditorium(id);
+            if(!existingAuditorium){
+                return sendResponse(res, 400, { error: 'Auditorium not found' });
+            }
             const { AUDITORIUM_NAME, AUDITORIUM_CAPACITY, AUDITORIUM_TYPE } = req.body;
             const updated = await dbQueries.updateAuditorium(
                 id,

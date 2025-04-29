@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 7px 12px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        #tasks-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .task-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .task-link {
+            font-size: 18px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .task-link:hover {
+            text-decoration: underline;
+        }
+
+        .task-id {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .task-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .delete-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+<h1>Task Manager</h1>
+<a href="/new" class="btn">Create new task</a>
+
+<div id="tasks-container">
+    <div class="loading">Loading tasks...</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tasksContainer = document.getElementById('tasks-container');
+
+        function renderTasks(tasks) {
+            if (tasks.length === 0) {
+                tasksContainer.innerHTML = '<p>No tasks found</p>';
+                return;
+            }
+
+            const tasksList = document.createElement('ul');
+            tasksList.className = 'tasks-list';
+
+            tasks.forEach(task => {
+                const taskItem = document.createElement('li');
+                taskItem.className = 'task-item';
+
+                taskItem.innerHTML = `
+                    <div class="task-info">
+                        <a href="/${task.id}" class="task-link">${task.name}</a>
+                        <span class="task-id">ID: ${task.id}</span>
+                    </div>
+                    <div class="task-actions">
+                        <a href="/${task.id}/edit" class="btn btn-sm">Edit</a>
+                    </div>
+                    <div class="task-actions">
+                        <form action="/api/tasks/${task.id}" method="POST" class="delete-form">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                `;
+
+                const deleteForm = taskItem.querySelector('.delete-form');
+                deleteForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    if (confirm(`Are you sure you want to delete task ${task.name}?`)) {
+                        try {
+                            const response = await fetch(`/api/tasks/${task.id}`, {
+                                method: 'DELETE'
+                            });
+
+                            if (response.ok) {
+                                taskItem.remove();
+                                if (document.querySelectorAll('.task-item').length === 0) {
+                                    tasksContainer.innerHTML = '<p>No tasks found</p>';
+                                }
+                            } else {
+                                alert('Failed to delete task');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Error deleting task');
+                        }
+                    }
+                });
+
+                tasksList.appendChild(taskItem);
+            });
+
+            tasksContainer.innerHTML = '';
+            tasksContainer.appendChild(tasksList);
+        }
+
+        function handleError(error) {
+            console.error('Error:', error);
+            tasksContainer.innerHTML = `
+                <div class="error">
+                    <p>Failed to load tasks. Please try again later.</p>
+                    <button onclick="window.location.reload()" class="btn">Retry</button>
+                </div>
+            `;
+        }
+
+        fetch('/api/tasks')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(tasks => {
+                renderTasks(tasks);
+            })
+            .catch(error => {
+                handleError(error);
+            });
+    });
+</script>
